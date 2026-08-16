@@ -76,39 +76,6 @@
     body.filters-open #panel.full { height:58vh; max-height:58vh; }
     .tiny { display:none; }
     #panel.full .tiny { display:block; }
-    .item.starred { border-color:#f59e0b; background:#fffbeb; }
-    .item.starred .nm::before { content:"★ "; color:#b45309; }
-    .note-line { font-size:10px; color:#475569; margin-top:3px; }
-    .acts { display:flex; flex-direction:column; gap:4px; }
-    .acts button { border:0; border-radius:8px; padding:6px 8px; font-size:11px; font-weight:700; cursor:pointer; }
-    .code { background:#7c3aed; color:#fff; }
-    .star { background:#f59e0b; color:#1B365D; }
-    .note { background:#0f766e; color:#fff; }
-    #pairBar { font-size:11px; color:#475569; margin-top:6px; display:flex; flex-wrap:wrap; gap:6px; align-items:center; }
-    #pairBar input { font-size:12px; padding:4px 6px; border-radius:6px; border:1px solid #d1d5db; width:88px; }
-    #addBanner {
-      display:none; position:absolute; z-index:700; left:50%; transform:translateX(-50%);
-      top:70px; background:#b45309; color:#fff; padding:8px 12px; border-radius:999px;
-      font-size:12px; font-weight:800; white-space:nowrap;
-    }
-    body.adding #addBanner { display:block; }
-    .sheet {
-      display:none; position:fixed; inset:0; z-index:10000;
-      background:rgba(15,23,42,.55); align-items:flex-end; justify-content:center;
-    }
-    .sheet.open { display:flex; }
-    .sheet .card {
-      background:#fff; width:100%; max-width:520px; border-radius:16px 16px 0 0;
-      padding:14px; max-height:80vh; overflow:auto;
-    }
-    .sheet h3 { margin:0 0 8px; color:#1B365D; }
-    .sheet label { display:block; font-size:12px; font-weight:700; margin:8px 0 3px; }
-    .sheet input, .sheet textarea, .sheet select {
-      width:100%; font-size:14px; padding:8px; border:1px solid #d1d5db; border-radius:8px;
-    }
-    .sheet .row { display:flex; gap:8px; margin-top:10px; }
-    .sheet .row button { flex:1; padding:10px; border:0; border-radius:8px; font-weight:800; }
-    #signModal .body h3.hi { outline:3px solid #C4A35A; background:#fff7ed; padding:6px; border-radius:8px; }
   }
   @media (min-width:801px) {
     #panel {
@@ -120,6 +87,39 @@
     body.list-collapsed header { right:0; }
     .grab { display:none; }
   }
+  .item.starred { border-color:#f59e0b; background:#fffbeb; }
+  .item.starred .nm::before { content:"★ "; color:#b45309; }
+  .note-line { font-size:10px; color:#475569; margin-top:3px; }
+  .acts { display:flex; flex-direction:column; gap:4px; }
+  .acts button { border:0; border-radius:8px; padding:6px 8px; font-size:11px; font-weight:700; cursor:pointer; }
+  .code { background:#7c3aed; color:#fff; }
+  .star { background:#f59e0b; color:#1B365D; }
+  .note { background:#0f766e; color:#fff; }
+  #pairBar { font-size:11px; color:#475569; margin-top:6px; display:flex; flex-wrap:wrap; gap:6px; align-items:center; }
+  #pairBar input { font-size:12px; padding:4px 6px; border-radius:6px; border:1px solid #d1d5db; width:88px; }
+  #addBanner {
+    display:none; position:absolute; z-index:700; left:50%; transform:translateX(-50%);
+    top:70px; background:#b45309; color:#fff; padding:8px 12px; border-radius:999px;
+    font-size:12px; font-weight:800; white-space:nowrap;
+  }
+  body.adding #addBanner { display:block; }
+  .sheet {
+    display:none; position:fixed; inset:0; z-index:10000;
+    background:rgba(15,23,42,.55); align-items:flex-end; justify-content:center;
+  }
+  .sheet.open { display:flex; }
+  .sheet .card {
+    background:#fff; width:100%; max-width:520px; border-radius:16px 16px 0 0;
+    padding:14px; max-height:80vh; overflow:auto;
+  }
+  .sheet h3 { margin:0 0 8px; color:#1B365D; }
+  .sheet label { display:block; font-size:12px; font-weight:700; margin:8px 0 3px; }
+  .sheet input, .sheet textarea, .sheet select {
+    width:100%; font-size:14px; padding:8px; border:1px solid #d1d5db; border-radius:8px;
+  }
+  .sheet .row { display:flex; gap:8px; margin-top:10px; }
+  .sheet .row button { flex:1; padding:10px; border:0; border-radius:8px; font-weight:800; }
+  #signModal .body h3.hi { outline:3px solid #C4A35A; background:#fff7ed; padding:6px; border-radius:8px; }
   .prog { padding:10px 14px 6px; background:#fff; border-bottom:1px solid #e5e7eb; }
   .bar { height:8px; background:#e5e7eb; border-radius:99px; overflow:hidden; }
   .bar>i { display:block; height:100%; background:#1F6B4A; width:0; }
