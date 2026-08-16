@@ -17,15 +17,24 @@
     --fair:#553c9a; --matt:#c026d3; --atk:#b45309;
   }
   * { box-sizing:border-box; }
-  html,body { margin:0; height:100%; font-family:Calibri,Segoe UI,system-ui,sans-serif; background:#0f172a; color:#0f172a; }
+  html,body { margin:0; height:100%; font-family:Calibri,Segoe UI,system-ui,sans-serif; background:#0f172a; color:#0f172a; overflow:hidden; }
   #map { position:absolute; inset:0; }
   header {
     position:absolute; top:0; left:0; right:0; z-index:500;
     background:linear-gradient(180deg,rgba(27,54,93,.96),rgba(27,54,93,.88));
-    color:#fff; padding:10px 14px 8px; backdrop-filter:blur(8px);
+    color:#fff; padding:8px 10px 8px; backdrop-filter:blur(8px);
   }
-  header h1 { margin:0; font-size:16px; letter-spacing:.04em; }
-  header p { margin:2px 0 8px; font-size:12px; color:#F4E4B3; }
+  .topbar { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+  header h1 { margin:0; font-size:15px; letter-spacing:.04em; flex:1; min-width:0; }
+  header p { margin:4px 0 8px; font-size:12px; color:#F4E4B3; }
+  .topbtns { display:flex; gap:6px; flex:0 0 auto; }
+  .topbtns button {
+    border:0; border-radius:999px; padding:7px 11px; font-size:12px; font-weight:800;
+    background:rgba(255,255,255,.14); color:#fff; cursor:pointer;
+  }
+  .topbtns button.on { background:#C4A35A; color:#1B365D; }
+  #filterDrawer { display:none; margin-top:8px; }
+  body.filters-open #filterDrawer { display:block; }
   .chips { display:flex; gap:6px; overflow-x:auto; padding-bottom:4px; -webkit-overflow-scrolling:touch; }
   .chip {
     flex:0 0 auto; border:0; border-radius:999px; padding:6px 11px;
@@ -44,20 +53,37 @@
   #panel {
     position:absolute; z-index:500; background:#F7F4EE;
     box-shadow:0 -8px 30px rgba(0,0,0,.25);
+    display:flex; flex-direction:column;
+    transition: height .22s ease, max-height .22s ease, transform .22s ease, width .22s ease;
   }
+  .grab {
+    flex:0 0 auto; border:0; background:#fff; cursor:pointer; padding:8px 12px 6px;
+    display:flex; flex-direction:column; align-items:center; gap:4px;
+  }
+  .grab i { width:42px; height:4px; border-radius:99px; background:#cbd5e1; display:block; }
+  .grab span { font-size:11px; font-weight:800; color:var(--navy); }
   @media (max-width:800px) {
-    header { padding-top: max(10px, env(safe-area-inset-top)); }
+    header { padding-top: max(8px, env(safe-area-inset-top)); }
     #panel {
-      left:0; right:0; bottom:0; max-height:46vh;
-      border-radius:16px 16px 0 0; display:flex; flex-direction:column;
+      left:0; right:0; bottom:0; height:58px; max-height:58px;
+      border-radius:16px 16px 0 0;
     }
+    #panel.half { height:42vh; max-height:42vh; }
+    #panel.full { height:86vh; max-height:86vh; }
+    #panel.peek .prog, #panel.peek .list, #panel.peek .tiny { display:none; }
+    body.filters-open #panel { display:none; }
+    .tiny { display:none; }
+    #panel.full .tiny { display:block; }
   }
   @media (min-width:801px) {
     #panel {
       top:0; right:0; width:380px; height:100%;
-      border-left:1px solid #d0d5dd;
+      border-left:1px solid #d0d5dd; border-radius:0;
     }
     header { right:380px; }
+    body.list-collapsed #panel { transform:translateX(104%); }
+    body.list-collapsed header { right:0; }
+    .grab { display:none; }
   }
   .prog { padding:10px 14px 6px; background:#fff; border-bottom:1px solid #e5e7eb; }
   .bar { height:8px; background:#e5e7eb; border-radius:99px; overflow:hidden; }
@@ -86,11 +112,15 @@
     padding:7px 8px; font-size:11px; font-weight:700; cursor:pointer; white-space:nowrap;
   }
   .fab {
-    position:absolute; z-index:600; left:12px; bottom:12px;
+    position:absolute; z-index:600; left:12px; bottom:70px;
     background:#C4A35A; color:#1B365D; border:0; border-radius:999px;
     padding:12px 16px; font-weight:800; font-size:13px; box-shadow:0 6px 20px rgba(0,0,0,.25); cursor:pointer;
   }
-  @media (max-width:800px){ .fab { bottom: calc(46vh + 10px); } }
+  @media (max-width:800px){
+    #panel.half ~ .fab, body:has(#panel.half) .fab { bottom: calc(42vh + 10px); }
+    #panel.full ~ .fab, body:has(#panel.full) .fab { bottom: calc(86vh + 10px); }
+  }
+  @media (min-width:801px){ .fab { bottom: 16px; } }
   .leaflet-popup-content { margin:10px 12px; min-width:220px; }
   .pop h3 { margin:0 0 4px; font-size:15px; color:var(--navy); }
   .pop p { margin:0 0 6px; font-size:12px; color:#334155; }
@@ -142,7 +172,15 @@
 <body>
 <div id="map"></div>
 <header>
-  <h1>HUNTSVILLE · SIN CAMP</h1>
+  <div class="topbar">
+    <h1>HUNTSVILLE · SIN CAMP</h1>
+    <div class="topbtns">
+      <button type="button" id="btnFilters">Filters</button>
+      <button type="button" id="btnList">List</button>
+      <button type="button" id="btnMap" class="on">Map</button>
+    </div>
+  </div>
+  <div id="filterDrawer">
   <p>v1.2  ·  street starts Tuesday 12–5  ·  no Monday grid  ·  Rebecca rotates all 4 zones</p>
   <div class="chips" id="days">
     <button class="chip on" data-day="All">All</button>
@@ -170,8 +208,13 @@
     <label><input type="checkbox" data-layer="zones" checked> 4 official teams</label>
     <label><input type="checkbox" data-layer="lines" checked> Do-not-cross</label>
   </div>
+  </div>
 </header>
-<div id="panel">
+<div id="panel" class="peek">
+  <button type="button" class="grab" id="panelGrab" aria-label="Open or close the stop list">
+    <i></i>
+    <span id="panelHint">Map first · tap for the stop list</span>
+  </button>
   <div class="prog">
     <b id="count">0 / 0 visited</b>
     <div class="bar"><i id="bar"></i></div>
@@ -378,6 +421,74 @@ document.getElementById("btnSignCode2")?.addEventListener("click", () => {
 
 refreshMarks();
 renderList();
+
+(function fieldPhoneUI(){
+  const panel = document.getElementById("panel");
+  const hint = document.getElementById("panelHint");
+  const btnMap = document.getElementById("btnMap");
+  const btnList = document.getElementById("btnList");
+  const btnFilters = document.getElementById("btnFilters");
+  const grab = document.getElementById("panelGrab");
+  const modes = ["peek", "half", "full"];
+  function phone(){ return window.innerWidth < 801; }
+  function fitMap(){
+    try { map.invalidateSize(); } catch(e) {}
+  }
+  function setPanel(mode){
+    if (!phone()) {
+      document.body.classList.toggle("list-collapsed", mode === "peek");
+      document.body.classList.remove("filters-open");
+      btnMap.classList.toggle("on", mode === "peek");
+      btnList.classList.toggle("on", mode !== "peek");
+      btnFilters.classList.remove("on");
+      setTimeout(fitMap, 230);
+      return;
+    }
+    modes.forEach(m => panel.classList.remove(m));
+    panel.classList.add(mode);
+    document.body.classList.toggle("map-focus", mode === "peek");
+    if (mode !== "peek") document.body.classList.remove("filters-open");
+    btnMap.classList.toggle("on", mode === "peek");
+    btnList.classList.toggle("on", mode !== "peek");
+    btnFilters.classList.toggle("on", document.body.classList.contains("filters-open"));
+    hint.textContent = mode === "peek"
+      ? "Map first · tap for the stop list"
+      : mode === "half"
+        ? "Stop list · tap again for more · Map to hide"
+        : "Full list · tap Map to see the whole city";
+    setTimeout(fitMap, 230);
+  }
+  btnMap.addEventListener("click", () => {
+    document.body.classList.remove("filters-open");
+    btnFilters.classList.remove("on");
+    setPanel("peek");
+  });
+  btnList.addEventListener("click", () => {
+    document.body.classList.remove("filters-open");
+    btnFilters.classList.remove("on");
+    if (!phone()) { setPanel("full"); return; }
+    setPanel(panel.classList.contains("peek") ? "half" : "full");
+  });
+  btnFilters.addEventListener("click", () => {
+    const open = document.body.classList.toggle("filters-open");
+    btnFilters.classList.toggle("on", open);
+    if (open && phone()) setPanel("peek");
+    setTimeout(fitMap, 230);
+  });
+  grab.addEventListener("click", () => {
+    if (!phone()) return;
+    if (panel.classList.contains("peek")) setPanel("half");
+    else if (panel.classList.contains("half")) setPanel("full");
+    else setPanel("peek");
+  });
+  const oldFocus = window.focusStop;
+  window.focusStop = function(id){
+    if (typeof oldFocus === "function") oldFocus(id);
+    if (phone()) setPanel("peek");
+  };
+  setPanel("peek");
+  window.addEventListener("resize", () => setTimeout(fitMap, 200));
+})();
 </script>
 
 <div id="signModal" role="dialog" aria-modal="true" aria-labelledby="signTitle">
