@@ -342,6 +342,7 @@
         <li>Static messages only · min <b>10-sec</b> dwell · auto-dim (≤0.3 fc over ambient)</li>
         <li>One EMC per lot · must black-out on malfunction</li>
       </ul>
+      <div class="portals"><a id="idxMadison" href="https://silkyp9.github.io/Huntsville-SIN-CAMP/code-index.html?name=Madison" target="_blank" rel="noopener">Open code index</a></div>
 
       <h3 id="codeHuntsville">HUNTSVILLE (Art. 72)</h3>
       <ul>
@@ -350,6 +351,7 @@
         <li>Electronic face ≤ <b>75%</b> of total sign area</li>
         <li>Heights typically 10–35 ft by district · auto-dim required · no animation</li>
       </ul>
+      <div class="portals"><a id="idxHuntsville" href="https://silkyp9.github.io/Huntsville-SIN-CAMP/code-index.html?name=Huntsville" target="_blank" rel="noopener">Open code index</a></div>
 
       <h3>Field rule</h3>
       <ul>
@@ -446,6 +448,43 @@ function gdir(s){
   return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(s.address)}`;
 }
 function notesFor(id){ return PROG.notes[id] || []; }
+const CODE_INDEX = "https://silkyp9.github.io/Huntsville-SIN-CAMP/code-index.html";
+function zoneToken(text){
+  const m = String(text||"").match(/\b(A-C|B-[123]|DT|DTE|H-I|L-I|O-I|O-[23]|R-[1-4]|PUD|MUD[234]|INST|MH-[12]|UC)\b/i);
+  return m ? m[1].toUpperCase() : "";
+}
+function existingNote(text){
+  const m = String(text||"").match(/(?:existing|pre-existing|already there|pylon|monument|cabinet|channel letters|emc)[^.\n]{0,80}/i);
+  return m ? m[0].trim() : "";
+}
+function codeIndexUrl(o){
+  const q = new URLSearchParams();
+  if (o.name) q.set("name", o.name);
+  if (o.place) q.set("place", o.place);
+  if (o.zone) q.set("zone", o.zone);
+  if (o.existing) q.set("existing", o.existing);
+  if (o.zone || o.existing) q.set("verify", "1");
+  const s = q.toString();
+  return CODE_INDEX + (s ? "?" + s : "");
+}
+function stopIndexParts(s){
+  if (!s) return {name:"", place:"", zone:"", existing:""};
+  const notes = notesFor(s.id).map(n => n.text).join(" ");
+  const seeded = [notes, s.sign_code||"", s.zone||"", s.existing||""].join(" ");
+  return {
+    name: cityOf(s),
+    place: s.address || "",
+    zone: s.zone || zoneToken(seeded),
+    existing: s.existing || existingNote(notes)
+  };
+}
+function applyIndexLinks(city, stop){
+  const mad = document.getElementById("idxMadison");
+  const hsv = document.getElementById("idxHuntsville");
+  const parts = stopIndexParts(stop);
+  if (mad) mad.href = codeIndexUrl(city === "Madison" && stop ? Object.assign({}, parts, {name:"Madison"}) : {name:"Madison"});
+  if (hsv) hsv.href = codeIndexUrl(city === "Huntsville" && stop ? Object.assign({}, parts, {name:"Huntsville"}) : {name:"Huntsville"});
+}
 function showStop(s){
   if (!layerOn[s.layer]) return false;
   if (dayFilter === "STAR") return starred.has(s.id);
@@ -481,7 +520,8 @@ function popup(s){
       ${can?`<button class="mark" onclick="toggleVisit('${s.id}',true)">Visited</button>`:""}
       <button class="star" onclick="toggleStar('${s.id}')">${starLab}</button>
       <button class="note" onclick="openNotes('${s.id}')">Notes</button>
-      <button class="code" onclick="openSignCode('${city}')">${esc(city)} code</button>
+      <button class="code" onclick="openSignCode('${city}','${s.id}')">${esc(city)} code</button>
+      <a class="dir" target="_blank" rel="noopener" href="${codeIndexUrl(stopIndexParts(s))}">Open code index</a>
     </div>
   </div>`;
 }
@@ -531,10 +571,12 @@ window.toggleStar = function(id){
   persist(); renderList(); refreshMarks();
   if (markers[id]) markers[id].openPopup();
 };
-window.openSignCode = function(city){
+window.openSignCode = function(city, stopId){
   const modal = document.getElementById("signModal");
+  const stop = stopId ? DATA.stops.find(x => x.id===stopId) : null;
   modal.classList.add("open");
   document.querySelectorAll("#signModal h3").forEach(h => h.classList.remove("hi"));
+  applyIndexLinks(city, stop);
   if (city === "Madison") {
     const el = document.getElementById("codeMadison");
     if (el) { el.classList.add("hi"); el.scrollIntoView({block:"center"}); }

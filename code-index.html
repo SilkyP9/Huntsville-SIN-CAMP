@@ -126,7 +126,7 @@ function verify() {
   } else { notes.push("No zone code entered. Verify key cannot match a district until the map pin has one."); if (status === "match") { status = "unk"; label = "Unverified — no zone on the pin"; } }
   if (proposed.raw) {
     notes.push("Proposed change stored against this check (not written back to a map yet).");
-    if (proposed.emc && /residential|special exception|restricted downtown|unknown|uncurated/.test(rec.rules.emc)) { status = "gap"; label = "Proposed gap — EMC needs a check"; gaps.push(`EMC / electronic: ${rec.rules.emc}. Do not quote as by-right.`); }
+    if (proposed.emc && /residential|special exception|restricted downtown|unknown|uncurated|separate|not automatic|overlay/.test(rec.rules.emc)) { status = "gap"; label = "Check — EMC needs a separate read"; gaps.push(`EMC / electronic: ${rec.rules.emc}. Do not quote as by-right.`); }
     if (proposed.offPremise) { status = "gap"; label = "Proposed gap — off-premise"; gaps.push("Off-premise / billboard is a different section than on-premise freestanding. Open that section before pricing."); }
     if (rec.rules.speedTable && (proposed.sf || proposed.height) && !proposed.mph) { status = status === "match" ? "gap" : status; gaps.push("This city sizes freestanding signs by posted speed (Table 3). Add the speed limit before comparing area or height."); }
     if (rec.id === "al-dothan" && proposed.mph && proposed.sf) notes.push("Dothan Table 3 is district-and-speed. A single square-foot number is not enough — open Sec. 114-219 and read the row for that speed and zone.");
