@@ -459,11 +459,14 @@ function existingNote(text){
 }
 function codeIndexUrl(o){
   const q = new URLSearchParams();
+  const catalog = ["dothan","enterprise","houston county (unincorporated)","ozark","geneva","eufaula","troy","columbus","albany","bainbridge","thomasville","marianna","panama city","chipley","bonifay"];
   if (o.name) q.set("name", o.name);
-  if (o.place) q.set("place", o.place);
-  if (o.zone) q.set("zone", o.zone);
-  if (o.existing) q.set("existing", o.existing);
-  if (o.zone || o.existing) q.set("verify", "1");
+  if (catalog.indexOf(String(o.name||"").toLowerCase()) >= 0) {
+    if (o.place) q.set("place", o.place);
+    if (o.zone) q.set("zone", o.zone);
+    if (o.existing) q.set("existing", o.existing);
+    if (o.zone || o.existing) q.set("verify", "1");
+  }
   const s = q.toString();
   return CODE_INDEX + (s ? "?" + s : "");
 }
