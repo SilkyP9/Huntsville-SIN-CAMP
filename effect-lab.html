@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Effect lab · ALPHA</title>
+<style>
+  :root { --paper:#E7EEEC; --ink:#10211E; --dark:#071614; --gold:#C4A35A; --green:#1F8A62; }
+  body { margin:0; font-family:"Segoe UI",sans-serif; background:var(--paper); color:var(--ink); line-height:1.45; }
+  header { background:#0F3D3E; color:#F7FFFC; padding:16px; }
+  header a { color:#F4E4B3; }
+  main { max-width:820px; margin:0 auto; padding:16px; }
+  h1 { font-size:1.4rem; margin:0 0 6px; }
+  h2 { font-size:1.1rem; margin:22px 0 8px; }
+  .card { background:#fff; border:4px solid var(--dark); border-radius:12px; padding:12px; margin:12px 0; }
+  .row { display:flex; flex-wrap:wrap; gap:12px; align-items:center; }
+  .swatch { width:140px; height:84px; display:grid; place-items:center; background:#10211E; color:#F7FFFC; border-radius:10px; font-weight:700; }
+  code, pre { font-size:0.78rem; background:#F4F7F6; border-radius:8px; }
+  pre { padding:10px; overflow:auto; }
+  table { width:100%; border-collapse:collapse; font-size:0.86rem; }
+  td, th { border-bottom:1px solid #D5E0DE; text-align:left; padding:6px 4px; vertical-align:top; }
+  .yes { color:#166534; font-weight:700; }
+  .no { color:#9A3412; font-weight:700; }
+  .mid { color:#B45309; font-weight:700; }
+</style>
+</head>
+<body>
+<header>
+  <a href="https://silkyp9.github.io/Huntsville-SIN-CAMP/">Alpha pages</a>
+  <h1>Effect lab — glow techniques</h1>
+  <p>A separate teaching page. The code index stays as it is. These demos run in the phone browser. The host only has to send the file.</p>
+</header>
+<main>
+<p>A glow is not one tool. It is a blurred copy of a shape, tinted, then painted behind or around the original. CSS, SVG filters, and canvas can all do that. C++, Java, Node, and Drizzle do not draw the glow by themselves.</p>
+
+<h2>1. SVG filter glow — the one to learn first</h2>
+<p>An SVG filter is a little image pipeline. You name the steps. The browser runs them on the shape. This is the technique behind most “delicious” sign-like glows.</p>
+<div class="card">
+  <svg width="100%" height="120" viewBox="0 0 640 120">
+    <defs>
+      <filter id="goldGlow" x="-40%" y="-40%" width="180%" height="180%">
+        <feGaussianBlur in="SourceAlpha" stdDeviation="6" result="blur" />
+        <feFlood flood-color="#E8C872" flood-opacity="0.85" result="gold" />
+        <feComposite in="gold" in2="blur" operator="in" result="tint" />
+        <feMerge>
+          <feMergeNode in="tint" />
+          <feMergeNode in="SourceGraphic" />
+        </feMerge>
+      </filter>
+      <filter id="greenPin" x="-40%" y="-40%" width="180%" height="180%">
+        <feMorphology in="SourceAlpha" operator="dilate" radius="2" result="fat" />
+        <feGaussianBlur in="fat" stdDeviation="3" result="blur" />
+        <feFlood flood-color="#1F8A62" flood-opacity="0.7" result="green" />
+        <feComposite in="green" in2="blur" operator="in" result="halo" />
+        <feMerge>
+          <feMergeNode in="halo" />
+          <feMergeNode in="SourceGraphic" />
+        </feMerge>
+      </filter>
+    </defs>
+    <text x="20" y="70" font-size="42" font-family="Segoe UI" fill="#071614" filter="url(#goldGlow)">Dothan</text>
+    <text x="250" y="70" font-size="42" font-family="Segoe UI" fill="#F7FFFC" filter="url(#greenPin)">B-2</text>
+  </svg>
+  <pre>&lt;filter id="goldGlow"&gt;
+  &lt;feGaussianBlur in="SourceAlpha" stdDeviation="6" result="blur"/&gt;
+  &lt;feFlood flood-color="#E8C872" flood-opacity="0.85" result="gold"/&gt;
+  &lt;feComposite in="gold" in2="blur" operator="in" result="tint"/&gt;
+  &lt;feMerge&gt;
+    &lt;feMergeNode in="tint"/&gt;
+    &lt;feMergeNode in="SourceGraphic"/&gt;
+  &lt;/feMerge&gt;
+&lt;/filter&gt;</pre>
+  <p>The letter fill stays solid. The glow is a separate blurred object painted first. That is the “outward halo” you described.</p>
+</div>
+
+<h2>2. Filter primitives — the vocabulary</h2>
+<table>
+  <tr><th>Primitive</th><th>What it looks like</th><th>Ask for it as</th></tr>
+  <tr><td>feGaussianBlur</td><td>Soft halo, frosted edge</td><td>“blur the alpha, not the fill”</td></tr>
+  <tr><td>feFlood + feComposite</td><td>Tinted glow (gold, green)</td><td>“color the blur, keep the letters dark”</td></tr>
+  <tr><td>feMerge</td><td>Stacks glow under the original</td><td>“paint glow first, letters on top”</td></tr>
+  <tr><td>feOffset</td><td>Hard drop shadow, neon offset</td><td>“shift the shadow down-right”</td></tr>
+  <tr><td>feDropShadow</td><td>Shorthand blur + offset + color</td><td>“one-line drop glow”</td></tr>
+  <tr><td>feMorphology dilate</td><td>Fatter outline before the blur</td><td>“grow a pin-strip, then glow it”</td></tr>
+  <tr><td>feMorphology erode</td><td>Thinner shape, inner edge</td><td>“shrink the fill, keep an outline”</td></tr>
+  <tr><td>feColorMatrix</td><td>Recolor, invert, desaturate</td><td>“invert the glow, not the letters”</td></tr>
+  <tr><td>feComponentTransfer</td><td>Gamma, contrast, threshold</td><td>“make the halo fall off faster”</td></tr>
+  <tr><td>feTurbulence</td><td>Noise, smoke, metal grain</td><td>“add a faint noise in the gold”</td></tr>
+  <tr><td>feDisplacementMap</td><td>Wavy, liquid, heat shimmer</td><td>“displace the edge, not the text”</td></tr>
+  <tr><td>feSpecularLighting</td><td>Shiny metal highlight</td><td>“specular highlight on the gold hairline”</td></tr>
+  <tr><td>feDiffuseLighting</td><td>Soft raised plate</td><td>“emboss the card, keep text flat”</td></tr>
+  <tr><td>feConvolveMatrix</td><td>Sharpen, emboss, edge detect</td><td>“sharpen the letter edge only”</td></tr>
+</table>
+
+<h2>3. CSS glow — what the index is using</h2>
+<div class="card row">
+  <div class="swatch" style="text-shadow:0 0 8px #E8C872, 0 0 16px rgba(31,138,98,.6)">CSS text</div>
+  <div class="swatch" style="box-shadow:0 0 18px rgba(196,163,90,.7), inset 0 0 0 1px #1F8A62, inset 0 0 0 2px #E4C56A; border:6px solid #071614">CSS box</div>
+  <div class="swatch" style="filter:drop-shadow(0 0 8px #E8C872)">CSS filter</div>
+</div>
+<ul>
+  <li><b>text-shadow</b> — halo on glyphs. Cheap. Stays readable if the fill color is solid and the blur is outside.</li>
+  <li><b>box-shadow</b> — halo on the rectangle, plus inset rings (the green pin and gold hairline).</li>
+  <li><b>filter: drop-shadow()</b> — follows the real shape, including transparent PNG letters. Heavier than text-shadow.</li>
+  <li><b>background gradients</b> — the wash behind a title. Not a glow by itself until you blur a copy.</li>
+  <li><b>mix-blend-mode / background-clip:text</b> — metallic letter fill. Easy to hurt legibility.</li>
+</ul>
+
+<h2>4. What animates, and where</h2>
+<table>
+  <tr><th>Effect</th><th>On thealphasignature.com (Hostinger PHP site)</th><th>Notes</th></tr>
+  <tr><td>CSS transition, @keyframes, text-shadow pulse</td><td class="yes">Yes</td><td>Browser. Upload the CSS file.</td></tr>
+  <tr><td>SVG filters, SMIL, CSS animation on SVG</td><td class="yes">Yes</td><td>Same. No server language required.</td></tr>
+  <tr><td>Canvas 2D, WebGL, three.js, Lottie</td><td class="yes">Yes</td><td>If you upload the JS. Phone GPU decides smoothness.</td></tr>
+  <tr><td>PHP pages, login.php, MySQL</td><td class="yes">Yes</td><td>This is what the CRM already is.</td></tr>
+  <tr><td>Node.js API, Drizzle ORM</td><td class="mid">Separate app</td><td>Hostinger can host Node on some plans. It does not style a PHP page. Drizzle only talks to a database.</td></tr>
+  <tr><td>Java, Python, C++ server</td><td class="no">No on this web plan</td><td>Those need a VPS. They still do not draw glows.</td></tr>
+  <tr><td>C++ compiled to WebAssembly</td><td class="mid">Yes, if prebuilt</td><td>You compile elsewhere, upload the .wasm. Overkill for a card glow.</td></tr>
+  <tr><td>Vendor SDK (NovaStar, ArcGIS)</td><td class="mid">Link or embed</td><td>An SDK is someone else’s library, not an effect language.</td></tr>
+</table>
+
+<h2>5. Language vs effect — do not mix these up</h2>
+<div class="card">
+  <p><b>CSS</b> — describes paint: color, shadow, gradient, animation. Works everywhere the file is served.</p>
+  <p><b>SVG</b> — drawing plus a filter graph. Best when the glow must follow letters or a logo path.</p>
+  <p><b>JavaScript</b> — turns effects on, reads a field, swaps a class. Canvas and WebGL live here.</p>
+  <p><b>PHP</b> — builds the page on Hostinger before it is sent. It does not animate. The browser does.</p>
+  <p><b>Node</b> — JavaScript on a server. APIs, sockets, file watchers. Not a glow.</p>
+  <p><b>Drizzle</b> — a Node/TypeScript library that writes SQL. Zero pixels.</p>
+  <p><b>Java</b> — server or Android apps. Not available as the page renderer on this Hostinger site.</p>
+  <p><b>C++</b> — native apps, game engines, sign-controller firmware. A web page cannot compile C++ on Hostinger. A prebuilt WebAssembly file can run in the browser, which is the wrong tool for a title glow.</p>
+  <p><b>SDK</b> — a kit from a vendor (maps, LED players, payments). You call it. You do not “write an SDK glow.”</p>
+</div>
+
+<h2>6. How to ask for the next look</h2>
+<ul>
+  <li>“SVG gold glow under the city name, letters stay #071614, blur 6, opacity .4.”</li>
+  <li>“CSS only: inset 1px green, 1px gold, 6px dark outer, no SVG.”</li>
+  <li>“Pulse the gold halo 2.5s, ease-in-out, do not move the card.”</li>
+  <li>“Do not use canvas. Must work as one HTML file on Hostinger and on the phone.”</li>
+</ul>
+<p>For the Alpha CRM pages, stay on CSS and inline SVG. Upload the HTML/CSS into <code>public_html</code>. Do not add Node, Drizzle, Java, or C++ to get a prettier card.</p>
+</main>
+</body>
+</html>
