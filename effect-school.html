@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#0F3D3E" />
+<title>Effect school · ALPHA</title>
+<style>
+  :root { --paper:#E7EEEC; --ink:#071614; --header:#0F3D3E; --gold:#C4A35A; --pin:#1B8F6A; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:"Segoe UI",Calibri,sans-serif; background:var(--paper); color:var(--ink); line-height:1.45; }
+  .parent { background:var(--header); color:#E7F4F2; padding:10px 16px; display:flex; justify-content:space-between; gap:12px; }
+  .parent a { color:#F7F4EE; text-decoration:none; font-size:0.78rem; letter-spacing:0.08em; text-transform:uppercase; font-weight:700; border-bottom:2px solid var(--gold); }
+  header { background:var(--header); color:#F7FFFC; padding:8px 16px 18px; }
+  h1 { margin:0 0 6px; font-size:1.4rem; }
+  h2 { margin:22px 0 8px; font-size:1.12rem; }
+  h3 { margin:14px 0 6px; font-size:1rem; }
+  main { padding:12px 16px 40px; max-width:760px; }
+  .card { background:#fff; border:6px solid #071614; border-radius:14px; padding:14px; margin:12px 0; box-shadow: inset 0 0 0 1px #1B8F6A, inset 0 0 0 2px #C4A35A, 6px 6px 0 #071614; }
+  .ok { color:#166534; font-weight:700; }
+  .no { color:#9B2C2C; font-weight:700; }
+  .mid { color:#B45309; font-weight:700; }
+  code, pre { font-family:ui-monospace,Consolas,monospace; font-size:0.78rem; }
+  pre { background:#0F3D3E; color:#F7FFFC; padding:10px; border-radius:8px; overflow:auto; }
+  table { width:100%; border-collapse:collapse; font-size:0.86rem; }
+  td, th { border-bottom:1px solid #D5E0DE; text-align:left; padding:6px 4px; vertical-align:top; }
+  .demo { background:#10211F; border-radius:10px; padding:16px; margin-top:8px; text-align:center; }
+  .demo svg { max-width:100%; height:auto; }
+  .swatch { display:inline-block; margin:8px; }
+</style>
+</head>
+<body>
+<div class="parent"><a href="index.html">Map hub</a><a href="code-index.html">Code index</a></div>
+<header>
+  <h1>Effect school</h1>
+  <p>How to name the look you want, and what will actually run on thealphasignature.com (Hostinger). This page is teaching only. The code index stays as it is.</p>
+</header>
+<main>
+<section class="card">
+  <h2>The short rule for your live domain</h2>
+  <p><span class="ok">Works</span> if the phone draws it: HTML, CSS, SVG, SVG filters, CSS animations, and plain JavaScript files you upload into public_html.</p>
+  <p><span class="no">Does not work</span> as a page effect: C++, Java, a native SDK, Drizzle, or a Node server process. Those are not browser paints. Hostinger will not run them just because the file is sitting next to login.php.</p>
+  <p>thealphasignature.com is a PHP site (login.php). Shared PHP hosting serves files. It does not compile C++ or keep a Java or Node process alive unless you add a separate Node Web App on a Business or Cloud plan, or a VPS.</p>
+</section>
+
+<section class="card">
+  <h2>What each word actually is</h2>
+  <table>
+    <tr><th>Name</th><th>What it is</th><th>On Hostinger for this domain</th></tr>
+    <tr><td>CSS</td><td>Style language the browser reads. Color, shadow, gradient, animation.</td><td class="ok">Yes. This is how the code index is painted.</td></tr>
+    <tr><td>SVG</td><td>Vector drawing in XML. Shapes, text, and a filter section.</td><td class="ok">Yes, inline or as a .svg file.</td></tr>
+    <tr><td>SVG filter</td><td>A stack of steps (blur, color, offset) applied to a drawing.</td><td class="ok">Yes, in Safari and Chrome on the phone.</td></tr>
+    <tr><td>Canvas</td><td>A bitmap the page paints with JavaScript every frame.</td><td class="ok">Yes, but heavier on an old phone.</td></tr>
+    <tr><td>WebGL</td><td>GPU drawing through canvas. Three.js uses this.</td><td class="mid">Yes if you upload the JS. iPhone Safari can throttle it.</td></tr>
+    <tr><td>PHP</td><td>Server language Hostinger already runs. Builds the page before it is sent.</td><td class="ok">Yes. Not a glow tool.</td></tr>
+    <tr><td>Node</td><td>JavaScript running as a server, not in the page.</td><td class="no">Not on the current PHP site. Business/Cloud Node Web App or VPS only.</td></tr>
+    <tr><td>Drizzle</td><td>A database kit for Node (talks to MySQL/Postgres). Not a visual effect.</td><td class="no">Needs Node plus a database. Useless for card glow.</td></tr>
+    <tr><td>Java</td><td>A server or desktop language. Browser applets are dead.</td><td class="no">No JVM on this PHP host.</td></tr>
+    <tr><td>C++</td><td>Compiled native code. Can be turned into WebAssembly.</td><td class="no">A .exe or .so will not run. A .wasm file can, if you compile it elsewhere and upload it.</td></tr>
+    <tr><td>SDK</td><td>A kit of tools for one platform (iOS SDK, Maps SDK). Not an effect.</td><td class="mid">Only the browser-safe part, loaded as JS. A native SDK will not install on Hostinger.</td></tr>
+  </table>
+</section>
+
+<section class="card">
+  <h2>SVG filter glow — the pieces</h2>
+  <p>A glow is not one property. It is a pipeline. You blur a copy, color that copy, then lay the sharp original on top. The glow object is separate from the letter fill, which is what you asked for on the city cards.</p>
+  <ol>
+    <li><b>feGaussianBlur</b> — the soft halo. stdDeviation is the spread. 2 is a pin light. 8 is a bloom.</li>
+    <li><b>feMorphology</b> operator="dilate" — grows the shape before the blur, so the glow is an outline, not a fill of the letter.</li>
+    <li><b>feFlood</b> + <b>feComposite</b> — paints the halo one color (gold or green) instead of the text color.</li>
+    <li><b>feColorMatrix</b> — recolors or fades the blur. Use this for a low-opacity gold wash.</li>
+    <li><b>feOffset</b> — moves the blur. Zero offset is a halo. A few pixels down is a drop shadow.</li>
+    <li><b>feMerge</b> — stacks the glow under the original so letters stay sharp.</li>
+    <li><b>feDropShadow</b> — shorthand for offset + blur + color. Less control than the stack.</li>
+    <li><b>feTurbulence</b> + <b>feDisplacementMap</b> — ripples the glow. Pretty, expensive on a phone.</li>
+    <li><b>feSpecularLighting</b> / <b>feDiffuseLighting</b> — fake metal highlight. Heavy. Use once, not on every card.</li>
+    <li><b>feComponentTransfer</b> — curves the alpha so the glow falls off instead of looking muddy.</li>
+    <li><b>feConvolveMatrix</b> — a tiny sharpen or emboss kernel. Easy to wreck text with this.</li>
+  </ol>
+  <pre><filter id="goldGlow" x="-40%" y="-40%" width="180%" height="180%">
+  <feMorphology in="SourceAlpha" operator="dilate" radius="1" result="edge"/>
+  <feGaussianBlur in="edge" stdDeviation="4" result="blur"/>
+  <feFlood flood-color="#C4A35A" flood-opacity="0.65" result="gold"/>
+  <feComposite in="gold" in2="blur" operator="in" result="halo"/>
+  <feMerge>
+    <feMergeNode in="halo"/>
+    <feMergeNode in="SourceGraphic"/>
+  </feMerge>
+</filter></pre>
+  <p>x/y/width/height must be larger than the shape or the glow gets clipped. That is the usual "my glow disappeared" bug.</p>
+</section>
+
+<section class="card">
+  <h2>Live examples — these run in the phone browser</h2>
+  <p class="ok">All of these work on Hostinger if the page is a normal HTML file.</p>
+
+  <h3>1. Gaussian halo under sharp text</h3>
+  <div class="demo">
+    <svg viewBox="0 0 320 70" width="320" height="70">
+      <defs>
+        <filter id="g1" x="-30%" y="-50%" width="160%" height="200%">
+          <feGaussianBlur in="SourceAlpha" stdDeviation="4" result="b"/>
+          <feFlood flood-color="#F4E4B3" flood-opacity="0.8" result="c"/>
+          <feComposite in="c" in2="b" operator="in" result="h"/>
+          <feMerge><feMergeNode in="h"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <text x="16" y="46" fill="#F7FFFC" font-size="32" font-weight="700" filter="url(#g1)">Dothan, AL</text>
+    </svg>
+  </div>
+
+  <h3>2. Dilate first, so the glow is an outline</h3>
+  <div class="demo">
+    <svg viewBox="0 0 320 70" width="320" height="70">
+      <defs>
+        <filter id="g2" x="-30%" y="-50%" width="160%" height="200%">
+          <feMorphology in="SourceAlpha" operator="dilate" radius="1.4" result="edge"/>
+          <feGaussianBlur in="edge" stdDeviation="2.2" result="b"/>
+          <feFlood flood-color="#1B8F6A" flood-opacity="0.9" result="c"/>
+          <feComposite in="c" in2="b" operator="in" result="h"/>
+          <feMerge><feMergeNode in="h"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <text x="16" y="46" fill="#F7FFFC" font-size="32" font-weight="700" filter="url(#g2)">Marianna</text>
+    </svg>
+  </div>
+
+  <h3>3. feDropShadow shorthand</h3>
+  <div class="demo">
+    <svg viewBox="0 0 320 70" width="320" height="70">
+      <defs>
+        <filter id="g3" x="-20%" y="-20%" width="140%" height="160%">
+          <feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#C4A35A" flood-opacity="0.85"/>
+        </filter>
+      </defs>
+      <text x="16" y="46" fill="#F7FFFC" font-size="32" font-weight="700" filter="url(#g3)">Columbus</text>
+    </svg>
+  </div>
+
+  <h3>4. Offset drop, not a halo</h3>
+  <div class="demo">
+    <svg viewBox="0 0 320 70" width="320" height="70">
+      <defs>
+        <filter id="g4" x="-20%" y="-20%" width="150%" height="170%">
+          <feOffset in="SourceAlpha" dx="3" dy="4" result="o"/>
+          <feGaussianBlur in="o" stdDeviation="2" result="b"/>
+          <feFlood flood-color="#000" flood-opacity="0.55" result="c"/>
+          <feComposite in="c" in2="b" operator="in" result="h"/>
+          <feMerge><feMergeNode in="h"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <text x="16" y="46" fill="#F4E4B3" font-size="32" font-weight="700" filter="url(#g4)">Enterprise</text>
+    </svg>
+  </div>
+
+  <h3>5. Turbulence ripple — pretty, skip on a long list</h3>
+  <div class="demo">
+    <svg viewBox="0 0 320 70" width="320" height="70">
+      <defs>
+        <filter id="g5" x="-10%" y="-20%" width="120%" height="150%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="1" result="n"/>
+          <feDisplacementMap in="SourceGraphic" in2="n" scale="4"/>
+        </filter>
+      </defs>
+      <text x="16" y="46" fill="#F4E4B3" font-size="32" font-weight="700" filter="url(#g5)">Panama City</text>
+    </svg>
+  </div>
+
+  <h3>6. Specular sheen — one hero mark, not every card</h3>
+  <div class="demo">
+    <svg viewBox="0 0 320 80" width="320" height="80">
+      <defs>
+        <filter id="g6" x="-20%" y="-20%" width="140%" height="160%">
+          <feGaussianBlur in="SourceAlpha" stdDeviation="1.2" result="b"/>
+          <feSpecularLighting in="b" surfaceScale="3" specularConstant="0.8" specularExponent="18" lighting-color="#fff4d2" result="spec">
+            <fePointLight x="40" y="-20" z="60"/>
+          </feSpecularLighting>
+          <feComposite in="spec" in2="SourceAlpha" operator="in" result="lit"/>
+          <feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="lit"/></feMerge>
+        </filter>
+      </defs>
+      <text x="16" y="50" fill="#C4A35A" font-size="32" font-weight="700" filter="url(#g6)">ALPHA</text>
+    </svg>
+  </div>
+</section>
+
+<section class="card">
+  <h2>CSS effects that also work on the domain</h2>
+  <p>Use these when you do not need a separate glow object. They are cheaper than SVG filters on a long list of city cards.</p>
+  <ul>
+    <li><b>text-shadow</b> stacked, blur only, no offset — outward halo. Letter fill stays solid. This is what the code index uses.</li>
+    <li><b>box-shadow</b> inset rings — the dark / gold / green pin stack.</li>
+    <li><b>linear-gradient / radial-gradient</b> — washes behind a title.</li>
+    <li><b>filter: drop-shadow()</b> — follows the alpha of the whole element, including text. Good on a button, muddy if stacked on body copy.</li>
+    <li><b>backdrop-filter: blur()</b> — frosted glass. Works in current Safari and Chrome. Costs GPU. Do not put it on every card.</li>
+    <li><b>mix-blend-mode</b> — screen or plus-lighter for a real light bloom. Can wash out black text. Test on the phone in daylight.</li>
+    <li><b>@keyframes</b> and <b>transition</b> — fade, slide, pulse a glow. Works. Prefer opacity and transform. Animating blur or box-shadow on 15 cards will stutter.</li>
+    <li><b>conic-gradient</b> — metallic spin on a border. Works. A spinning border on every card is noise.</li>
+  </ul>
+  <p class="swatch" style="color:#071614;background:#fff;padding:8px 12px;border-radius:8px;text-shadow:0 0 1px #fff, 0 0 10px rgba(196,163,90,.8), 0 0 18px rgba(27,143,106,.4);font-weight:700">CSS halo, letters still solid</p>
+</section>
+
+<section class="card">
+  <h2>How to ask for a look</h2>
+  <table>
+    <tr><th>Say this</th><th>We build this</th></tr>
+    <tr><td>Thick plate, hairline gold, green pin</td><td>CSS border + two inset box-shadows</td></tr>
+    <tr><td>Glow off the letter edge, not through the word</td><td>text-shadow blur, or SVG dilate + blur under SourceGraphic</td></tr>
+    <tr><td>Title wash that fades along the line</td><td>linear-gradient background on the heading only</td></tr>
+    <tr><td>Metal sheen on the logo</td><td>one SVG feSpecularLighting, not on the list</td></tr>
+    <tr><td>Soft bloom behind the card</td><td>a blurred pseudo-element, opacity under 0.5</td></tr>
+    <tr><td>Ripple or liquid</td><td>feTurbulence. One hero, not the catalog</td></tr>
+  </table>
+</section>
+
+<section class="card">
+  <h2>Will not run as a page effect on thealphasignature.com</h2>
+  <ul>
+    <li><b>C++</b> glow library, Unreal, a native binary. Hostinger shared PHP has no compiler and will not execute it.</li>
+    <li><b>Java</b> Swing, JavaFX, old applets. Browsers dropped applets. No Java runtime on this host.</li>
+    <li><b>Node</b> server, Express, a websocket glow engine. Not on the PHP public_html. Only if you add a Hostinger Node Web App (Business or Cloud plan) or a VPS, as a separate app.</li>
+    <li><b>Drizzle</b>. Database ORM. It does not paint pixels.</li>
+    <li><b>iOS / Android SDK</b> effects. Those live in an app, not in login.php.</li>
+    <li><b>SMIL</b> <animate> inside SVG. Chrome support is uneven. Use CSS animation instead.</li>
+    <li><b>Heavy WebGL</b> on the sales map. It can load, then the phone gets hot and Safari kills the tab.</li>
+  </ul>
+  <p>GitHub Pages (this file) and Hostinger public_html follow the same rule: if the browser can draw it from HTML, CSS, and SVG, it works. If it needs a compiler or a long-running server, it does not.</p>
+</section>
+<footer style="color:#243E38;font-size:0.8rem">Effect school. Separate from the code index. Seeded 2026-10-04 so we can name a look before we restyle a live card.</footer>
+</main>
+</body>
+</html>
